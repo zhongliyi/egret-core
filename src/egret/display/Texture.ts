@@ -167,7 +167,7 @@ module egret {
 
         public _drawForNative(context:any, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destWidth, destHeight, renderType) {
             var bitmapData = this._bitmapData;
-            if(bitmapData["autoDispose"]) {
+            if(bitmapData["autoDispose"] && this["renderContext"] == undefined) {
                 bitmapData.reload();
                 bitmapData["avaliable"] = true;
                 bitmapData["autoDispose"] = false;
