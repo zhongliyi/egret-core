@@ -167,6 +167,12 @@ module egret {
 
         public _drawForNative(context:any, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destWidth, destHeight, renderType) {
             var bitmapData = this._bitmapData;
+            if(bitmapData["autoDispose"]) {
+                bitmapData.reload();
+                bitmapData["avaliable"] = true;
+                bitmapData["autoDispose"] = false;
+                console.log("autoReloadBitmapData");
+            }
             if (!bitmapData["avaliable"]) {
                 return;
             }
@@ -174,6 +180,7 @@ module egret {
                 this._drawRepeatImageForNative(context, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destWidth, destHeight, renderType);
             }
             else {
+                bitmapData["lifespan"] = 10 * 1000;
                 context.drawImage(bitmapData, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destWidth, destHeight);
             }
         }
@@ -300,6 +307,8 @@ module egret {
                     promise.onSuccessFunc = function(bitmapData) {
                         Texture._bitmapDataFactory[url] = bitmapData;
                         bitmapData["avaliable"] = true;
+                        bitmapData["autoDispose"] = false;
+                        bitmapData["lifespan"] = 10 * 1000;
                         callback(0, bitmapData);
                     };
                     promise.onErrorFunc = function () {
@@ -313,6 +322,8 @@ module egret {
                     bitmapData = egret_native.Texture.addTexture(url);
                     Texture._bitmapDataFactory[url] = bitmapData;
                     bitmapData["avaliable"] = true;
+                    bitmapData["autoDispose"] = false;
+                    bitmapData["lifespan"] = 10 * 1000;
                     callback(0, bitmapData);
                 }
             }
@@ -325,6 +336,22 @@ module egret {
         }
 
         private static _bitmapDataFactory:any = {};
+
+        public static onEnterFrame(advancedTime:number):void {
+            var map = Texture._bitmapDataFactory;
+            for (var key in map) {
+                var bitmapData = map[key];
+                if(bitmapData["lifespan"] > 0) {
+                    bitmapData["lifespan"] -= advancedTime;
+                    if(bitmapData["lifespan"] <= 0) {
+                        bitmapData.dispose();
+                        bitmapData["avaliable"] = false;
+                        bitmapData["autoDispose"] = true;
+                        console.log("autoDisposeBitmapData");
+                    }
+                }
+            }
+        }
     }
 }
 

@@ -157,6 +157,8 @@ module egret {
             }
 
             context.onRenderFinish();
+
+            Texture.onEnterFrame(frameTime);
         }
 
         private _draw(context:RendererContext):void {
