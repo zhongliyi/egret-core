@@ -42,6 +42,7 @@ module egret {
          */
         constructor() {
             super();
+            this.needAutoDispose = false;
         }
 
         public init():void {

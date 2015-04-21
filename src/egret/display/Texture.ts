@@ -110,6 +110,8 @@ module egret {
 
         public _bitmapData:any = null;
 
+        protected needAutoDispose:boolean = true;
+
         public _setBitmapData(value:any) {
             var scale = egret.MainContext.instance.rendererContext._texture_scale_factor;
             this._bitmapData = value;
@@ -167,7 +169,7 @@ module egret {
 
         public _drawForNative(context:any, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destWidth, destHeight, renderType) {
             var bitmapData = this._bitmapData;
-            if(bitmapData["autoDispose"] && this["renderContext"] == undefined) {
+            if(bitmapData["autoDispose"] && this.needAutoDispose) {
                 bitmapData.reload();
                 bitmapData["avaliable"] = true;
                 bitmapData["autoDispose"] = false;
