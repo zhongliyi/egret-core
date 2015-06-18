@@ -14,6 +14,8 @@ function createZipFile(sourcePath, outputFile, call, password) {
     sourcePath = globals.addQuotes(sourcePath);
 
     var cmd = globals.getGlobalJava() + ' -jar ' + compilerPath + ' zip ' + outputFile + ' ' + sourcePath + ' ' + (password || "");
+    console.log(cmd);
+    return;
     var build = cp_exec(cmd);
 //        build.stdout.on("data", function(data) {
 //            globals.log(data);
@@ -33,4 +35,25 @@ function createZipFile(sourcePath, outputFile, call, password) {
     });
 }
 
-exports.createZipFile = createZipFile;
+function publishZip(sourcePath, outputFile, call, password) {
+    var compilerPath = path.join(param.getEgretPath(), "tools/lib/zip/" + process.platform + "/egret_publish");
+    compilerPath = globals.addQuotes(compilerPath);
+    outputFile = globals.addQuotes(outputFile);
+    sourcePath = globals.addQuotes(sourcePath);
+    var cmd = compilerPath + ' zip ' + outputFile + ' ' + sourcePath + ' ' + (password || '');
+    console.log(cmd);
+    var build = cp_exec(cmd);
+        build.stderr.on("data", function(data) {
+        globals.log(data);
+    });
+    build.on("exit", function(result) {
+        if (result == 0) {
+            call();
+        } else {
+            console.error("egret_publish出现异常！");
+        }
+    });
+}
+
+exports.createZipFile = publishZip;
+// exports.createZipFile = createZipFile;

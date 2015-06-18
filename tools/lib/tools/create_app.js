@@ -93,6 +93,10 @@ function rename_app(app_path, template_path, app_data) {
 }
 
 function run_unzip(app_path, template_path, app_data) {
+    if (process.platform == 'win32') {
+        console.error("非Unix系统");
+        return;
+    }
     var template_zip_path = path.join(template_path, app_data["template"]["zip"]);
     var cmd = "unzip -q " + template_zip_path + " -d " + app_path;
 
