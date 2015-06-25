@@ -1,5 +1,5 @@
 var fs = require('fs');
-var path = require('path');
+var path = require('../core/path');
 var globals = require("../core/globals");
 var param = require("../core/params_analyze.js");
 var file = require('../core/file.js');
@@ -93,9 +93,9 @@ function rename_app(app_path, template_path, app_data) {
 }
 
 function run_unzip(app_path, template_path, app_data) {
-    if (process.platform == 'win32') {
-        console.error("非Unix系统");
-        return;
+    if (process.platform == "win32") {
+        console.err("iOS support 只能运行在Mac OSX上")；
+        return；
     }
     var template_zip_path = path.join(template_path, app_data["template"]["zip"]);
     var cmd = "unzip -q " + globals.addQuotes(template_zip_path) + " -d " + globals.addQuotes(app_path);
